@@ -1,25 +1,49 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+//import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tasks: [],
+      inputValue: ""
+    }
+  }
+
+  handleInput = event =>{
+    const {value} = event.target;
+    this.setState({
+      inputValue: value
+      });
+  }
+  addTask = () => {
+    console.log(this.state.inputValue);
+    this.setState(prevState => ({
+      tasks: [...prevState.tasks, this.state.inputValue]
+    }))
+  }
+
+
   render() {
+    const {inputValue, tasks} = this.state;
+    //console.log(tasks);
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div>
+        <form>
+          <input
+            type="text"
+            onChange={this.handleInput}
+            value={this.state.inputValue}
+          />
+          <button onClick={this.addTask}>Add task</button>
+        </form>
+        <div>{inputValue}</div>
+        <ul>
+          {tasks.map(item => {
+            return <li>{item}</li>
+          })}
+        </ul>
       </div>
     );
   }
