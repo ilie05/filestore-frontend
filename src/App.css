@@ -32,6 +32,10 @@
   }
 }
 
+.wrapper{
+  width: 20%;
+}
+
 .wrapper ul {
   border: 1px solid black;
 }
