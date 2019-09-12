@@ -27,17 +27,14 @@ class App extends Component {
 
   render() {
     const {inputValue, tasks} = this.state;
-    //console.log(tasks);
     return (
-      <div>
-        <form>
+      <div className="wrapper">
           <input
             type="text"
             onChange={this.handleInput}
             value={this.state.inputValue}
           />
           <button onClick={this.addTask}>Add task</button>
-        </form>
         <div>{inputValue}</div>
         <ul>
           {tasks.map(item => {
