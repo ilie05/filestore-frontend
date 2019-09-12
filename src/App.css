@@ -32,6 +32,10 @@
   }
 }
 
+.wrapper ul {
+  border: 1px solid black;
+}
+
 .wrapper ul li {
   color: blue;
 }
