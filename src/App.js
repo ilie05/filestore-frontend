@@ -1,49 +1,40 @@
-import React, { Component } from 'react';
-//import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import { BrowserRouter as Router } from "react-router-dom";
+import { connect } from "react-redux";
+import BaseRouter from "./routes";
+import * as actions from "./store/actions/auth";
+import "semantic-ui-css/semantic.min.css";
+import CustomLayout from "./containers/Layout";
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      tasks: [],
-      inputValue: ""
-    }
+  componentDidMount() {
+    this.props.onTryAutoSignup();
   }
-
-  handleInput = event =>{
-    const {value} = event.target;
-    this.setState({
-      inputValue: value
-      });
-  }
-  addTask = () => {
-    console.log(this.state.inputValue);
-    this.setState(prevState => ({
-      tasks: [...prevState.tasks, this.state.inputValue]
-    }))
-  }
-
 
   render() {
-    const {inputValue, tasks} = this.state;
     return (
-      <div className="wrapper">
-          <input
-            type="text"
-            onChange={this.handleInput}
-            value={this.state.inputValue}
-          />
-          <button onClick={this.addTask}>Add task</button>
-        <div>{inputValue}</div>
-        <ul>
-          {tasks.map(item => {
-            return <li>{item}</li>
-          })}
-        </ul>
-      </div>
+      <Router>
+        <CustomLayout {...this.props}>
+          <BaseRouter />
+        </CustomLayout>
+      </Router>
     );
   }
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    isAuthenticated: state.auth.token !== null
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onTryAutoSignup: () => dispatch(actions.authCheckState())
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);
