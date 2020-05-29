@@ -5,13 +5,13 @@
 /.pnp
 .pnp.js
 
-/.idea/workspace.xml
+/.idea
 
 # testing
 /coverage
 
 # production
-/build
+#/build
 
 # misc
 .DS_Store
