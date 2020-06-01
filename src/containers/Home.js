@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import React, {Component} from "react";
 import FileUpload from "../components/FileUpload";
+import {Link} from "react-router-dom";
 import FilesContainer from "../components/FilesContainer";
 import {
   Button,
@@ -8,7 +9,6 @@ import {
   Divider,
   Grid,
   Header,
-  Image,
   Responsive,
   Segment,
   Sidebar,
@@ -24,11 +24,11 @@ const getWidth = () => {
 class DesktopContainer extends Component {
   state = {};
 
-  hideFixedMenu = () => this.setState({ fixed: false });
-  showFixedMenu = () => this.setState({ fixed: true });
+  hideFixedMenu = () => this.setState({fixed: false});
+  showFixedMenu = () => this.setState({fixed: true});
 
   render() {
-    const { children } = this.props;
+    const {children} = this.props;
 
     return (
       <Responsive getWidth={getWidth} minWidth={Responsive.onlyTablet.minWidth}>
@@ -50,13 +50,13 @@ DesktopContainer.propTypes = {
 class MobileContainer extends Component {
   state = {};
 
-  handleSidebarHide = () => this.setState({ sidebarOpened: false });
+  handleSidebarHide = () => this.setState({sidebarOpened: false});
 
-  handleToggle = () => this.setState({ sidebarOpened: true });
+  handleToggle = () => this.setState({sidebarOpened: true});
 
   render() {
-    const { children } = this.props;
-    const { sidebarOpened } = this.state;
+    const {children} = this.props;
+    const {sidebarOpened} = this.state;
 
     return (
       <Responsive
@@ -74,7 +74,7 @@ MobileContainer.propTypes = {
   children: PropTypes.node
 };
 
-const ResponsiveContainer = ({ children }) => (
+const ResponsiveContainer = ({children}) => (
   <div>
     <DesktopContainer>{children}</DesktopContainer>
     <MobileContainer>{children}</MobileContainer>
@@ -88,76 +88,51 @@ ResponsiveContainer.propTypes = {
 const HomepageLayout = ({authenticated}) => (
   <ResponsiveContainer>
     {authenticated ? (
-    <Segment style={{ padding: "8em 0em" }} vertical>
-      <Grid container stackable verticalAlign="middle">
-        <Grid.Row>
-          <Grid.Column width={12}>
-            <FileUpload/><br/><br/>
-            <FilesContainer/>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
-    </Segment>
+      <Segment style={{padding: "8em 0em"}} vertical>
+        <Grid container stackable verticalAlign="middle">
+          <Grid.Row>
+            <Grid.Column width={12}>
+              <FileUpload/><br/><br/>
+              <FilesContainer/>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      </Segment>
     ) : (
-    <Segment style={{ padding: "0em" }} vertical>
-      <Grid celled="internally" columns="equal" stackable>
-        <Grid.Row textAlign="center">
-          <Grid.Column style={{ paddingBottom: "5em", paddingTop: "5em" }}>
-            <Header as="h3" style={{ fontSize: "2em" }}>
-              "What a Company"
-            </Header>
-            <p style={{ fontSize: "1.33em" }}>
-              That is what they all say about us
-            </p>
-          </Grid.Column>
-          <Grid.Column style={{ paddingBottom: "5em", paddingTop: "5em" }}>
-            <Header as="h3" style={{ fontSize: "2em" }}>
-              "I shouldn't have gone with their competitor."
-            </Header>
-            <p style={{ fontSize: "1.33em" }}>
-              <Image avatar src="/images/avatar/large/nan.jpg" />
-              <b>Nan</b> Chief Fun Officer Acme Toys
-            </p>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
-    </Segment>
+      <Segment style={{padding: "8em 0em"}} vertical>
+        <Container text>
+          <Header as="h3" style={{fontSize: "2em"}}>
+            File storage is just the beginning
+          </Header>
+          <p style={{fontSize: "1.33em"}}>
+            Bring traditional files, cloud content, FileStorage Paper docs, and web shortcuts together in one place—and
+            work
+            the way that works for you.
+          </p>
+          <Link to='/signup'>
+            <Button as="a" size="large">Start now</Button>
+          </Link>
+          <Divider
+            as="h4"
+            className="header"
+            horizontal
+            style={{margin: "3em 0em", textTransform: "uppercase"}}
+          >
+            <a href="#">Case Studies</a>
+          </Divider>
+          <Header as="h3" style={{fontSize: "2em"}}>
+            Stay focused
+          </Header>
+          <p style={{fontSize: "1.33em"}}>
+            Personalized suggestions give you files and folders when you need them so you spend less time searching.
+          </p>
+          <Link to='/signup'>
+            <Button as="a" size="large">I'm Still Quite Interested</Button>
+          </Link>
+        </Container>
+      </Segment>
     )}
-    <Segment style={{ padding: "8em 0em" }} vertical>
-      <Container text>
-        <Header as="h3" style={{ fontSize: "2em" }}>
-          File storage is just the beginning
-        </Header>
-        <p style={{ fontSize: "1.33em" }}>
-          Instead of focusing on content creation and hard work, we have learned
-          how to master the art of doing nothing by providing massive amounts of
-          whitespace and generic content that can seem massive, monolithic and
-          worth your attention.
-        </p>
-        <Button as="a" size="large">
-          Read More
-        </Button>
-        <Divider
-          as="h4"
-          className="header"
-          horizontal
-          style={{ margin: "3em 0em", textTransform: "uppercase" }}
-        >
-          <a href="#">Case Studies</a>
-        </Divider>
-        <Header as="h3" style={{ fontSize: "2em" }}>
-          Did We Tell You About Our Bananas?
-        </Header>
-        <p style={{ fontSize: "1.33em" }}>
-          Yes I know you probably disregarded the earlier boasts as non-sequitur
-          filler content, but it's really true. It took years of gene splicing
-          and combinatory DNA research, but our bananas can really dance.
-        </p>
-        <Button as="a" size="large">
-          I'm Still Quite Interested
-        </Button>
-      </Container>
-    </Segment>
+
   </ResponsiveContainer>
 );
 

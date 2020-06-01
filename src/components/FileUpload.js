@@ -22,10 +22,7 @@ class FileUpload extends Component {
     const {loadFile, getFiles, token} = this.props;
     if (!fileContent) return;
     loadFile(fileContent, token)
-      .then((data) => {
-        console.log(data);
-        getFiles(token);
-      })
+      .then(() => getFiles(token))
   }
 
   render() {

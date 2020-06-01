@@ -28,7 +28,9 @@ class FilesContainer extends Component {
   }
 
   formatDate = (date) => {
-    date = date.split('T')[0];
+    let dt = date.split('T')[0];
+    let time = date.split('T')[1].split('Z')[0];
+    return `${dt} ${time}`;
   }
 
   handleDownload = (filename) => {
@@ -39,7 +41,6 @@ class FilesContainer extends Component {
     const {deleteFile, getFiles, token} = this.props;
     deleteFile(filename, token)
       .then(res => {
-        console.log(res);
         getFiles(token);
       })
   }
@@ -69,7 +70,7 @@ class FilesContainer extends Component {
                 <div style={containerStyle}>
                   <Card.Content>
                     <Card.Header>{file.Key}</Card.Header>
-                    <Card.Meta>Last update: {file.LastModified}</Card.Meta>
+                    <Card.Meta>Last update: {this.formatDate(file.LastModified)}</Card.Meta>
                   </Card.Content>
                   <Card.Content>
                     <Label size='medium' horizontal>
@@ -89,7 +90,7 @@ class FilesContainer extends Component {
           </React.Fragment>
         ) : (
           <React.Fragment>
-            { !loadingGetFiles && (
+            {!loadingGetFiles && (
               <Message icon='inbox' header="No data" style={{marginLeft: '10px'}}/>
             )}
           </React.Fragment>
@@ -100,7 +101,6 @@ class FilesContainer extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log(state);
   return {
     token: state.auth.token,
     loadingGetFiles: state.file.loadingGetFiles,

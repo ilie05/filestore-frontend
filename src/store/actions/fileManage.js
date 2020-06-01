@@ -1,7 +1,7 @@
 import * as actionTypes from "./actionTypes";
 
-const URL = 'http://127.0.0.1:8000/';
-// const URL = 'http://ec2-52-87-152-7.compute-1.amazonaws.com:8000/';
+// const URL = 'http://127.0.0.1:8000/';
+const URL = 'http://ec2-18-212-163-59.compute-1.amazonaws.com:8000/';
 
 const loadStart = () => {
   return {
@@ -47,12 +47,10 @@ export const loadFile = (fileContent, token) => dispatch => {
     body: formData,
   }).then(res => {
     dispatch(loadFinish());
-    console.log(res);
     return res.json();
   })
     .catch(err => {
       dispatch(loadFinish());
-      console.log(err)
     });
 }
 
@@ -65,11 +63,9 @@ export const getFiles = token => dispatch => {
       Authorization: `Token ${token}`
     }
   }).then(res => {
-    console.log(res);
     return res.json();
   })
     .then((data) => {
-      console.log(data);
       dispatch(getFilesFinish(data))
     })
     .catch(err => console.log(err));
@@ -85,18 +81,13 @@ export const downloadFile = (filename, token) => dispatch => {
     const contentDisposition = res.headers.get('content-disposition');
     const fileName = contentDisposition.split('; ')[1].split('=')[1];
     res.blob().then(blob => {
-      console.log(blob)
       let url = window.URL.createObjectURL(blob);
       let a = document.createElement('a');
       a.href = url;
       a.download = fileName;
       a.click();
     })
-    return res.json();
   })
-    .then((data) => {
-      console.log(data);
-    })
     .catch(err => console.log(err));
 }
 
