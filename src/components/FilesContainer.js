@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
-import {Card, Button, Label} from 'semantic-ui-react'
+import {Card, Button, Label, Loader, Message} from 'semantic-ui-react'
 import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
+import {loadFile, getFiles, downloadFile, deleteFile} from "../store/actions/fileManage";
 
 class FilesContainer extends Component {
   constructor(props) {
@@ -10,75 +12,36 @@ class FilesContainer extends Component {
     }
   }
 
+  componentDidMount() {
+    this.handleSubmit()
+  }
+
   componentDidUpdate(prevProps, prevState) {
-    const { token } = this.props;
+    const {token} = this.props;
     if (prevProps.token !== token) {
       this.handleSubmit()
     }
   }
 
   handleSubmit = () => {
-    fetch('http://localhost:8000/store/files', {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json, text/plain, */*',
-        // Authorization: `Token ${"asdasdasd"}`
-        Authorization: `Token ${this.props.token}`
-      }
-    }).then(res => {
-      console.log(res);
-      return res.json();
-    })
-      .then((data) => {
-        console.log(data);
-        this.setState({files: data})
-      })
-      .catch(err => console.log(err));
+    this.props.getFiles(this.props.token);
   }
 
   formatDate = (date) => {
     date = date.split('T')[0];
   }
 
-  handleDownload = (key) => {
-    const url = `http://localhost:8000/store/file?name=${key}`;
-    fetch(url, {
-      method: 'GET',
-      headers: {
-        Authorization: `Token ${this.props.token}`
-      }
-    }).then(res => {
-      const contentDisposition = res.headers.get('content-disposition');
-      const fileName = contentDisposition.split('; ')[1].split('=')[1];
-      res.blob().then(blob => {
-        console.log(blob)
-        let url = window.URL.createObjectURL(blob);
-        let a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        a.click();
-      })
-      return res.json();
-    })
-      .then((data) => {
-        console.log(data);
-        this.setState({files: data})
-      })
-      .catch(err => console.log(err));
+  handleDownload = (filename) => {
+    const {downloadFile, token} = this.props;
+    downloadFile(filename, token)
   }
-  handleDelete = (key) => {
-    let formData = new FormData();
-    formData.append('filename', key);
-    fetch('http://localhost:8000/store/file', {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Token ${this.props.token}`
-      },
-      body: formData,
-    }).then(res => {
-      console.log(res);
-    })
-      .catch(err => console.log(err));
+  handleDelete = (filename) => {
+    const {deleteFile, getFiles, token} = this.props;
+    deleteFile(filename, token)
+      .then(res => {
+        console.log(res);
+        getFiles(token);
+      })
   }
 
   formatNumber = (num) => {
@@ -86,7 +49,7 @@ class FilesContainer extends Component {
   }
 
   render() {
-    const {files} = this.state;
+    const {loadingGetFiles, files} = this.props;
     const containerStyle = {
       display: 'flex',
       justifyContent: 'space-between',
@@ -96,28 +59,41 @@ class FilesContainer extends Component {
     };
     return (
       <Card.Group style={{width: '1000px', marginLeft: '60px'}}>
-        {files.map(file => (
-          <Card fluid color='grey' key={file.Key}>
-            <div style={containerStyle}>
-              <Card.Content>
-                <Card.Header>{file.Key}</Card.Header>
-                <Card.Meta>Last update: {file.LastModified}</Card.Meta>
-              </Card.Content>
-              <Card.Content>
-                <Label size='medium' horizontal>
-                  Size
-                </Label>{this.formatNumber(file.Size)} bytes
-              </Card.Content>
-              <Card.Content>
-                <Button.Group>
-                  <Button onClick={() => this.handleDownload(file.Key)} positive>Download</Button>
-                  <Button.Or text='or'/>
-                  <Button onClick={() => this.handleDelete(file.Key)} negative>Delete</Button>
-                </Button.Group>
-              </Card.Content>
-            </div>
-          </Card>
-        ))}
+        <div style={{marginLeft: '465px'}}>
+          <Loader active={loadingGetFiles} size='small' inline='centered'>Loading files</Loader>
+        </div>
+        {files.length > 0 ? (
+          <React.Fragment>
+            {files.map(file => (
+              <Card fluid color='grey' key={file.Key}>
+                <div style={containerStyle}>
+                  <Card.Content>
+                    <Card.Header>{file.Key}</Card.Header>
+                    <Card.Meta>Last update: {file.LastModified}</Card.Meta>
+                  </Card.Content>
+                  <Card.Content>
+                    <Label size='medium' horizontal>
+                      Size
+                    </Label>{this.formatNumber(file.Size)} bytes
+                  </Card.Content>
+                  <Card.Content>
+                    <Button.Group>
+                      <Button onClick={() => this.handleDownload(file.Key)} positive>Download</Button>
+                      <Button.Or text='or'/>
+                      <Button onClick={() => this.handleDelete(file.Key)} negative>Delete</Button>
+                    </Button.Group>
+                  </Card.Content>
+                </div>
+              </Card>
+            ))}
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            { !loadingGetFiles && (
+              <Message icon='inbox' header="No data" style={{marginLeft: '10px'}}/>
+            )}
+          </React.Fragment>
+        )}
       </Card.Group>
     )
   }
@@ -127,7 +103,13 @@ const mapStateToProps = state => {
   console.log(state);
   return {
     token: state.auth.token,
+    loadingGetFiles: state.file.loadingGetFiles,
+    files: state.file.files
   };
 };
 
-export default connect(mapStateToProps, null)(FilesContainer);
+const mapDispatchToProps = dispatch => ({
+  ...bindActionCreators({loadFile, getFiles, downloadFile, deleteFile}, dispatch),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(FilesContainer);

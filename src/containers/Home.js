@@ -8,15 +8,13 @@ import {
   Divider,
   Grid,
   Header,
-  Icon,
   Image,
-  List,
-  Menu,
   Responsive,
   Segment,
   Sidebar,
   Visibility
 } from "semantic-ui-react";
+import {connect} from "react-redux";
 
 const getWidth = () => {
   const isSSR = typeof window === "undefined";
@@ -31,7 +29,6 @@ class DesktopContainer extends Component {
 
   render() {
     const { children } = this.props;
-    const { fixed } = this.state;
 
     return (
       <Responsive getWidth={getWidth} minWidth={Responsive.onlyTablet.minWidth}>
@@ -88,8 +85,9 @@ ResponsiveContainer.propTypes = {
   children: PropTypes.node
 };
 
-const HomepageLayout = () => (
+const HomepageLayout = ({authenticated}) => (
   <ResponsiveContainer>
+    {authenticated ? (
     <Segment style={{ padding: "8em 0em" }} vertical>
       <Grid container stackable verticalAlign="middle">
         <Grid.Row>
@@ -100,6 +98,7 @@ const HomepageLayout = () => (
         </Grid.Row>
       </Grid>
     </Segment>
+    ) : (
     <Segment style={{ padding: "0em" }} vertical>
       <Grid celled="internally" columns="equal" stackable>
         <Grid.Row textAlign="center">
@@ -123,6 +122,7 @@ const HomepageLayout = () => (
         </Grid.Row>
       </Grid>
     </Segment>
+    )}
     <Segment style={{ padding: "8em 0em" }} vertical>
       <Container text>
         <Header as="h3" style={{ fontSize: "2em" }}>
@@ -160,4 +160,11 @@ const HomepageLayout = () => (
     </Segment>
   </ResponsiveContainer>
 );
-export default HomepageLayout;
+
+const mapStateToProps = state => {
+  return {
+    authenticated: state.auth.token !== null
+  };
+};
+
+export default connect(mapStateToProps, null)(HomepageLayout);

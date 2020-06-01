@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import {connect} from "react-redux";
 import './FileUploadStyle.css';
 import {Button} from "semantic-ui-react";
+import {bindActionCreators} from 'redux';
+import {loadFile, getFiles} from "../store/actions/fileManage";
 
 class FileUpload extends Component {
   constructor(props) {
@@ -17,28 +19,17 @@ class FileUpload extends Component {
 
   handleSubmit = () => {
     const {fileContent} = this.state;
-    if(!fileContent) return;
-    let formData = new FormData();
-    formData.append('file_content', this.state.fileContent);
-    fetch('http://localhost:8000/store/file', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json, text/plain, */*',
-        Authorization: `Token ${this.props.token}`
-      },
-      body: formData,
-    }).then(res => {
-      console.log(res);
-      return res.json();
-    })
+    const {loadFile, getFiles, token} = this.props;
+    if (!fileContent) return;
+    loadFile(fileContent, token)
       .then((data) => {
         console.log(data);
+        getFiles(token);
       })
-      .catch(err => console.log(err));
   }
 
   render() {
-    const {loading} = this.props;
+    const {loadingUpload} = this.props;
     return (
       <div className="wrapper">
         <div className="file-upload">
@@ -49,18 +40,22 @@ class FileUpload extends Component {
           />
           <i className="fa fa-arrow-up"/>
         </div>
-        <Button onClick={this.handleSubmit} size="huge" inverted color='grey' loading={loading}>Upload file</Button>
+        <Button onClick={this.handleSubmit} size="huge" inverted color='grey' disabled={loadingUpload}
+                loading={loadingUpload}>Upload file</Button>
       </div>
     );
   }
 }
 
 const mapStateToProps = state => {
-  console.log(state);
   return {
     token: state.auth.token,
-    loading: false
+    loadingUpload: state.file.loadingUpload
   };
 };
 
-export default connect(mapStateToProps, null)(FileUpload);
+const mapDispatchToProps = dispatch => ({
+  ...bindActionCreators({loadFile, getFiles}, dispatch),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(FileUpload);
