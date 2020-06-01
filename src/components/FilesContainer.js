@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Card, Button} from 'semantic-ui-react'
+import {Card, Button, Label} from 'semantic-ui-react'
 import {connect} from "react-redux";
 
 class FilesContainer extends Component {
@@ -10,8 +10,11 @@ class FilesContainer extends Component {
     }
   }
 
-  componentDidMount() {
-    // this.handleSubmit();
+  componentDidUpdate(prevProps, prevState) {
+    const { token } = this.props;
+    if (prevProps.token !== token) {
+      this.handleSubmit()
+    }
   }
 
   handleSubmit = () => {
@@ -78,17 +81,21 @@ class FilesContainer extends Component {
       .catch(err => console.log(err));
   }
 
+  formatNumber = (num) => {
+    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+  }
+
   render() {
     const {files} = this.state;
     const containerStyle = {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      'height': '80px',
+      height: '80px',
       padding: '10px'
     };
     return (
-      <Card.Group style={{width: '1000px'}}>
+      <Card.Group style={{width: '1000px', marginLeft: '60px'}}>
         {files.map(file => (
           <Card fluid color='grey' key={file.Key}>
             <div style={containerStyle}>
@@ -96,7 +103,11 @@ class FilesContainer extends Component {
                 <Card.Header>{file.Key}</Card.Header>
                 <Card.Meta>Last update: {file.LastModified}</Card.Meta>
               </Card.Content>
-
+              <Card.Content>
+                <Label size='medium' horizontal>
+                  Size
+                </Label>{this.formatNumber(file.Size)} bytes
+              </Card.Content>
               <Card.Content>
                 <Button.Group>
                   <Button onClick={() => this.handleDownload(file.Key)} positive>Download</Button>
@@ -107,7 +118,6 @@ class FilesContainer extends Component {
             </div>
           </Card>
         ))}
-        <button onClick={this.handleSubmit}>Get Files</button>
       </Card.Group>
     )
   }
@@ -116,7 +126,7 @@ class FilesContainer extends Component {
 const mapStateToProps = state => {
   console.log(state);
   return {
-    token: state.auth.token
+    token: state.auth.token,
   };
 };
 

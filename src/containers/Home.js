@@ -93,15 +93,9 @@ const HomepageLayout = () => (
     <Segment style={{ padding: "8em 0em" }} vertical>
       <Grid container stackable verticalAlign="middle">
         <Grid.Row>
-
           <Grid.Column width={12}>
             <FileUpload/><br/><br/>
             <FilesContainer/>
-          </Grid.Column>
-        </Grid.Row>
-        <Grid.Row>
-          <Grid.Column textAlign="center">
-            <Button size="huge">Check Them Out</Button>
           </Grid.Column>
         </Grid.Row>
       </Grid>
@@ -132,7 +126,7 @@ const HomepageLayout = () => (
     <Segment style={{ padding: "8em 0em" }} vertical>
       <Container text>
         <Header as="h3" style={{ fontSize: "2em" }}>
-          Breaking The Grid, Grabs Your Attention
+          File storage is just the beginning
         </Header>
         <p style={{ fontSize: "1.33em" }}>
           Instead of focusing on content creation and hard work, we have learned

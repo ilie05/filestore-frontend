@@ -1,31 +1,30 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
+import './FileUploadStyle.css';
+import {Button} from "semantic-ui-react";
 
 class FileUpload extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      profilePic: null,
+      fileContent: null,
     };
-    this.inpuElement = null;
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(e) {
-    this.setState({profilePic: e.target.files[0]});
+  handleChange = (e) => {
+    this.setState({fileContent: e.target.files[0]});
   }
 
-  handleSubmit() {
+  handleSubmit = () => {
+    const {fileContent} = this.state;
+    if(!fileContent) return;
     let formData = new FormData();
-    formData.append('profile_pic', this.state.profilePic);
+    formData.append('file_content', this.state.fileContent);
     fetch('http://localhost:8000/store/file', {
       method: 'POST',
       headers: {
         Accept: 'application/json, text/plain, */*',
-        // Authorization: `Token ${"asdasdasd"}`
         Authorization: `Token ${this.props.token}`
-        // 'content-type': 'multipart/form-data',
       },
       body: formData,
     }).then(res => {
@@ -39,18 +38,18 @@ class FileUpload extends Component {
   }
 
   render() {
+    const {loading} = this.props;
     return (
-      <div>
-        <input
-          type="file"
-          multiple={false}
-          ref={(input) => {
-            this.inpuElement = input;
-          }}
-          // accept=".jpg,.jpeg,.png"
-          onChange={this.handleChange}
-        />
-        <button onClick={this.handleSubmit}>submit</button>
+      <div className="wrapper">
+        <div className="file-upload">
+          <input
+            type="file"
+            multiple={false}
+            onChange={this.handleChange}
+          />
+          <i className="fa fa-arrow-up"/>
+        </div>
+        <Button onClick={this.handleSubmit} size="huge" inverted color='grey' loading={loading}>Upload file</Button>
       </div>
     );
   }
@@ -59,7 +58,8 @@ class FileUpload extends Component {
 const mapStateToProps = state => {
   console.log(state);
   return {
-    token: state.auth.token
+    token: state.auth.token,
+    loading: false
   };
 };
 
