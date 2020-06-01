@@ -46,8 +46,7 @@ class FilesContainer extends Component {
       }
     }).then(res => {
       const contentDisposition = res.headers.get('content-disposition');
-      const fileName = contentDisposition.split(' ')[1].split('=')[1];
-      console.log(res.headers.get('content-disposition'))
+      const fileName = contentDisposition.split('; ')[1].split('=')[1];
       res.blob().then(blob => {
         console.log(blob)
         let url = window.URL.createObjectURL(blob);
@@ -65,7 +64,18 @@ class FilesContainer extends Component {
       .catch(err => console.log(err));
   }
   handleDelete = (key) => {
-    console.log(key);
+    let formData = new FormData();
+    formData.append('filename', key);
+    fetch('http://localhost:8000/store/file', {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Token ${this.props.token}`
+      },
+      body: formData,
+    }).then(res => {
+      console.log(res);
+    })
+      .catch(err => console.log(err));
   }
 
   render() {
