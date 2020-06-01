@@ -2,7 +2,7 @@ import axios from "axios";
 import * as actionTypes from "./actionTypes";
 
 // const URL = 'http://127.0.0.1:8000/';
-const URL = 'http://ec2-52-87-152-7.compute-1.amazonaws.com:8000/';
+const URL = 'http://ec2-18-212-163-59.compute-1.amazonaws.com:8000/';
 
 export const authStart = () => {
   return {
